@@ -1,4 +1,4 @@
-#include "helper_shell.c"
+#include "helper_shell.h"
 
 int main(int argc, char *argv[]){
     int echo = 0;                                
@@ -9,6 +9,7 @@ int main(int argc, char *argv[]){
     char line[1024];
     char *tokens[255]; //array for tokens/commands
     int ntok;
+    char *cmd;
 
     while(1){
         printf("(shell) ");
@@ -26,6 +27,15 @@ int main(int argc, char *argv[]){
         if (ntok == 0){
             continue;
         }
+        
+        cmd = tokens[0];
+        if (strcmp("help", cmd)==0){
+            print_help();
+        }
+        else if (strcmp("exit", cmd)==0){
+            break;
+        }
+        
     }
 
     return 0;

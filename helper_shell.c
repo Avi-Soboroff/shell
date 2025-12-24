@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-
-#define MAXCMDS 255 
+#include "helper_shell.h"
 
 void print_help(){
   char *helpstr = "\
