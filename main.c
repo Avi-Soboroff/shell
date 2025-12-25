@@ -35,7 +35,9 @@ int main(int argc, char *argv[]){
         else if (strcmp("exit", cmd)==0){
             break;
         }
-        
+        else {
+            
+        }
     }
 
     return 0;
