@@ -2,11 +2,11 @@
 #include <string.h> 
 #include <sys/types.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 #define MAXCMDS 255
 #define MAXLINE 1024
-
-typedef struct node_struct node_t;
 
 //struct which holds the value of each command
 typedef struct {
@@ -18,8 +18,10 @@ typedef struct {
 
 struct node {
     cmd_t cmd;
-    node_t *next;
+    struct node *next;
 };
+
+typedef struct node node_t;
 
 typedef struct {
     node_t *head;
@@ -33,7 +35,11 @@ typedef struct {
 void print_help();
 void tokenize_str(char line[], char *tokens[], int *ntok);
 
-//functiond for cmd_funcs.c
+//functions for cmd_funcs.c
 cmd_t *new_cmd(char *argv[]);
 void cmd_free(cmd_t *cmd);
 void cmd_start(cmd_t *cmd);
+
+//functions for list_funcs.c
+void list_init(cmd_list *list);
+int add_to_list(cmd_list *list, cmd_t *cmd);

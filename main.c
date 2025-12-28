@@ -6,7 +6,8 @@ int main(int argc, char *argv[]){
         echo=1;
     }
 
-    // cmd_list list;
+    cmd_list list;
+    list_init(&list);
     char line[1024];
     char *tokens[255]; //array for tokens/commands
     int ntok;
@@ -38,6 +39,7 @@ int main(int argc, char *argv[]){
         }
         else {
             cmd_t *cmd = new_cmd(tokens);
+            int adding_cmds = add_to_list(&list, cmd);
         }
     }
 

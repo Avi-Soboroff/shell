@@ -10,13 +10,14 @@ cmd_t *new_cmd(char *cmd_list[]){
         return NULL;
     }
     cmd->p_id = -1;
-    strncpy(cmd->cmd_name, cmd->all_cmds[0], MAXLINE);
+    strncpy(cmd->cmd_name, cmd_list[0], MAXLINE);
     cmd->cmd_name[MAXLINE-1] = '\0'; // NULL terminate end of command name
     int i = 0;
-    while (cmd_list[i] != NULL && i < MAXLINE){
+    while (cmd_list[i] != NULL && i < MAXCMDS){
         cmd->all_cmds[i] = strdup(cmd_list[i]);
         i++;
     }
+    cmd->all_cmds[i] = NULL; // NULL terminate the array for execvp
     cmd->cmd_count = i;
     return cmd;
 }
@@ -40,5 +41,8 @@ void cmd_start(cmd_t *cmd){
         execvp(cmd->all_cmds[0], cmd->all_cmds);
         printf("ERROR: cmd failed to exec: No such file or directory\n");
         exit(0);
+    }
+    if (process > 0){
+        cmd->p_id = process;
     }
 }
