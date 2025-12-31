@@ -2,7 +2,7 @@
 
 void print_help(){
   char *helpstr = "\
-SHELLAC COMMANDS\n\
+SHELL COMMANDS\n\
 help               : show this message\n\
 exit               : exit the program\n\
 jobs               : list all background jobs that are currently running\n\
@@ -12,6 +12,15 @@ tokens [arg1] ...  : print out all the tokens on this input line to see how they
 command [arg1] ... : Non-built-in is run as a job\n\
 ";
   printf("%s",helpstr);
+}
+
+char *strnull(char *str){
+  if(str == NULL){
+    return "NULL";
+  }
+  else{
+    return str;
+  }
 }
 
 // Prints out a message if the environment variable DEBUG is set;

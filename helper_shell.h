@@ -20,7 +20,7 @@
 #define BUFSIZE 1024            // size of read/write buffers
 #define MAX_ARGS 255             // max number of arguments
 #define MAX_LINE 1024           // maximum length of input lines
-#define MAX_JOBS 256            // maximum number of active commands in shellac
+#define MAX_JOBS 256            // maximum number of active commands in shell
 
 
 // // specific code for certain failure types
@@ -53,14 +53,14 @@ typedef struct {
   char   is_background;            // 1 for background job (& on command line), 0 otherwise
 } job_t;
 
-// shellac_t: struct for tracking state of shellac program
+// shell_t: struct for tracking state of shell
 typedef struct {                
   job_t *jobs[MAX_JOBS];         // array of pointers to job_t structs; may have NULLs internally
   int job_count;                 // count of non-null job_t entries
-} shellac_t;
+} shell_t;
 
 
-// shellac_util.c: PROVIDED UTILITY FUNCTIONS
+// helper_shell.c: PROVIDED UTILITY FUNCTIONS
 void Dprintf(const char* format, ...);
 char *strnull(char *str);
 char *job_condition_str(job_t *job);
@@ -69,21 +69,21 @@ void pause_for(double secs);
 void array_shift(char *strs[], int delpos, int maxlen);
 void print_help();
 
-// shellac_job.c
-job_t *job_new(char *argv[]);
-void job_free(job_t *job);
-void job_print(job_t *job);
+// shell_job.c
+job_t *new_job(char *argv[]);
+void free_job(job_t *job);
+void print_job(job_t *job);
 int job_update_status(job_t *job);
 void job_start(job_t *job);
 
-// shellac_control.c
-void shellac_init(shellac_t *shellac);
-int shellac_add_job(shellac_t *shellac, job_t *job);
-int shellac_remove_job(shellac_t *shellac, int idx);
-void shellac_start_job(shellac_t *shellac, int jobnum);
-void shellac_print_jobs(shellac_t *shellac);
-void shellac_free_jobs(shellac_t *shellac);
-void shellac_update_one(shellac_t *shellac, int jobnum);
-void shellac_update_all(shellac_t *shellac);
-void shellac_wait_one(shellac_t *shellac, int jobnum);
+// shell_control.c
+void shell_init(shell_t *shell);
+int shell_add_job(shell_t *shell, job_t *job);
+int shell_remove_job(shell_t *shell, int idx);
+void shell_start_job(shell_t *shell, int jobnum);
+void shell_print_jobs(shell_t *shell);
+void shell_free_jobs(shell_t *shell);
+void shell_update_one(shell_t *shell, int jobnum);
+void shell_update_all(shell_t *shell);
+void shell_wait_one(shell_t *shell, int jobnum);
 

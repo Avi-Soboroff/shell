@@ -52,6 +52,9 @@ int main(int argc, char *argv[]){
         else if (strcmp("wait", cmd)==0){
             printf("ERROR: No job '%s' to wait for\n", tokens[1]);
         }
+        else {
+            
+        }
     }
 
     return 0;
