@@ -73,8 +73,8 @@ void print_help();
 job_t *new_job(char *argv[]);
 void free_job(job_t *job);
 void print_job(job_t *job);
-int job_update_status(job_t *job);
-void job_start(job_t *job);
+int update_job_status(job_t *job);
+void start_job(job_t *job);
 
 // shell_control.c
 void shell_init(shell_t *shell);
