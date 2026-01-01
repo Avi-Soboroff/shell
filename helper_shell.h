@@ -77,13 +77,13 @@ int update_job_status(job_t *job);
 void start_job(job_t *job);
 
 // shell_control.c
-void shell_init(shell_t *shell);
-int shell_add_job(shell_t *shell, job_t *job);
-int shell_remove_job(shell_t *shell, int idx);
-void shell_start_job(shell_t *shell, int jobnum);
-void shell_print_jobs(shell_t *shell);
-void shell_free_jobs(shell_t *shell);
-void shell_update_one(shell_t *shell, int jobnum);
-void shell_update_all(shell_t *shell);
-void shell_wait_one(shell_t *shell, int jobnum);
+void init_shell(shell_t *shell);
+int add_job_shell(shell_t *shell, job_t *job);
+int remove_job_shell(shell_t *shell, int idx);
+void start_job_shell(shell_t *shell, int jobnum);
+void print_job_shell(shell_t *shell);
+void free_jobs_shell(shell_t *shell);
+void update_one_shell(shell_t *shell, int jobnum);
+void update_all_shell(shell_t *shell);
+void wait_one_shell(shell_t *shell, int jobnum);
 
