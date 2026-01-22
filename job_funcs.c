@@ -33,6 +33,12 @@ void print_job(job_t *job){
 //creates a new job based on the argv paramter. Returns NULL indicating error when no argument is passed. 
 //Allocates heap memory for a job_t struct and creates heap copies of argv[] via string duplication. The
 // initial condition of the job is INIT with -1 for its pid and retval. 
+//
+//
+//supports file redirection with these three characters: ">"(output file), "<"(input file), and "&"(background job). 
+//if theres no filename after output redirection, then print an error and free job from memory since it is useless
+//when there is no filename. Otherwise, use array_shift helper method to shift array twice to remove redirection symbol 
+//and file name once they are individually freed. 
 job_t *new_job(char *argv[]){
     if (argv == NULL){
         return NULL;
@@ -53,6 +59,45 @@ job_t *new_job(char *argv[]){
     job->argc = i;
     strncpy(job->jobname, job->argv[0], MAX_LINE);
     job->jobname[MAX_LINE-1] = '\0';
+    int j = 0;
+    while (job->argv[j] != NULL){
+        if (strcmp(">", job->argv[j])==0){
+            if (job->argv[j+1] == NULL){ 
+                printf("Error: No file found\n");
+                free_job(job);
+                return NULL;
+            }
+            job->output_file = strdup(argv[j+1]);
+            free(job->argv[j]);
+            free(job->argv[j+1]);
+            array_shift(job->argv, j, MAX_ARGS);
+            array_shift(job->argv, j, MAX_ARGS);
+            job->argc-=2;
+            continue;
+        }
+        else if (strcmp("<", job->argv[j])==0){
+            if (job->argv[j+1] == NULL){
+                printf("Error: No file found\n");
+                free_job(job);
+                return NULL;
+            }
+            job->input_file = strdup(argv[j+1]);
+            free(job->argv[j]);
+            free(job->argv[j+1]);
+            array_shift(job->argv, j, MAX_ARGS);
+            array_shift(job->argv, j, MAX_ARGS);
+            job->argc-=2; 
+            continue;
+        }
+        else if (strcmp(job->argv[j], "&") == 0){
+            job->is_background = 1;
+            free(job->argv[j]);
+            array_shift(job->argv, j, MAX_ARGS);
+            job->argc--;
+            continue;
+        }
+        j++;
+    }
     return job;
 }
 
@@ -74,6 +119,22 @@ void free_job(job_t *job){
 void start_job(job_t *job){
     pid_t process = fork();
     if (process == 0){
+        if (job->output_file != NULL){
+            int fd = open(job->output_file, O_WRONLY | O_CREAT | O_TRUNC);
+            if (fd == -1){
+                exit(JOBCOND_FAIL_OUTP);
+            }
+            dup2(fd, STDOUT_FILENO);
+            close(fd);
+        }
+        if (job->input_file != NULL){
+            int fd = open(job->input_file, O_RDONLY);
+            if (fd == -1){
+                exit(JOBCOND_FAIL_INPT);
+            }
+            dup2(fd, STDIN_FILENO);
+            close(fd);
+        }
         execvp(job->argv[0], job->argv);
         perror("exec'ed error");
         exit(JOBCOND_FAIL_EXEC);
@@ -92,6 +153,14 @@ int update_job_status(job_t *job){
     }
     int status; 
     pid_t result = waitpid(job->pid, &status, job->is_background);
+    int option = 0;
+    if (job->is_background){
+        option = WNOHANG;
+    }
+    result = waitpid(job->pid, &status, option);
+    if (result == 0){ //when a background job is still running, return 0
+        return 0;
+    }
     if (result == job->pid){
         if (WIFEXITED(status)){ //if the 
             job->retval = WEXITSTATUS(status); //retrieve exit status of process
